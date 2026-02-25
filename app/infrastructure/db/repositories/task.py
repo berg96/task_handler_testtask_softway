@@ -7,10 +7,11 @@ from app.config.settings import settings
 from app.domain.entities.task import TaskEntity
 from app.domain.enums import TaskStatus
 from app.domain.exceptions import TaskNotFound
+from app.domain.repositories import TaskRepositoryInterface
 from app.infrastructure.db import Task
 
 
-class TaskRepository:
+class TaskRepository(TaskRepositoryInterface):
     def __init__(self, session: AsyncSession):
         self.session = session
 
@@ -48,8 +49,8 @@ class TaskRepository:
     async def get_many(
         self,
         status: Optional[TaskStatus] = None,
-        limit: int = settings.LIMIT_DEFAULT,
-        offset: int = settings.OFFSET_DEFAULT,
+        limit: Optional[int] = settings.LIMIT_DEFAULT,
+        offset: Optional[int] = settings.OFFSET_DEFAULT,
     ) -> list[TaskEntity]:
         stmt = select(Task)
 

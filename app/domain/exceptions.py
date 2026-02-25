@@ -1,3 +1,6 @@
+from app.domain.enums import TaskStatus
+
+
 class NotFoundError(Exception):
     resource: str = "Resource"
     message_template: str = "{resource} not found"
@@ -13,3 +16,10 @@ class NotFoundError(Exception):
 
 class TaskNotFound(NotFoundError):
     resource = "Task"
+
+
+class InvalidTaskStatusTransition(Exception):
+    def __init__(self, from_status: TaskStatus, to_status: TaskStatus):
+        self.from_status = from_status
+        self.to_status = to_status
+        super().__init__(f"Cannot change task status from {from_status} to {to_status}")
