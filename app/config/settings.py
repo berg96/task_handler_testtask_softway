@@ -22,6 +22,9 @@ class Settings(BaseSettings):
 
     REDIS_URL: str = Field(..., description="URL подключения к Redis")
 
+    LIMIT_DEFAULT: int = Field(50, description="Количество элементов при пагинации по умолчанию")
+    OFFSET_DEFAULT: int = Field(0, description="Смещение элементов при пагинации по умолчанию")
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
