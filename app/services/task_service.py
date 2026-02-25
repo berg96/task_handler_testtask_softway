@@ -20,7 +20,7 @@ class TaskService:
     async def get_task(self, task_id: int) -> Optional[TaskEntity]:
         return await self.repo.get(task_id=task_id)
 
-    async def update_task_status(self, task_id: int, new_status: TaskStatus) -> Optional[TaskEntity]:
+    async def update_task_status(self, task_id: int, new_status: TaskStatus) -> TaskEntity:
         if not (task := await self.get_task(task_id)):
             raise TaskNotFound(identifier=task_id)
         TaskStatusPolicy.validate_transition(task.status, new_status)
