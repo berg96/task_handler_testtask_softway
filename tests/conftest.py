@@ -1,12 +1,19 @@
-from datetime import datetime
+import random
+from datetime import UTC, datetime
 from typing import Optional
+from unittest.mock import AsyncMock
 
+import pytest
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from app.config.settings import settings
+from app.domain.entities.task import TaskEntity
 from app.domain.enums import TaskStatus
+from app.domain.repositories import TaskRepositoryInterface
 from app.infrastructure.db import Task
+from app.infrastructure.db.repositories.task import TaskRepository
+from app.services.task_service import TaskService
 
 
 @pytest_asyncio.fixture
@@ -48,3 +55,38 @@ async def create_task(async_session):
         return task
 
     return _create
+
+
+@pytest.fixture
+def mock_repo():
+    return AsyncMock(spec=TaskRepositoryInterface)
+
+
+@pytest.fixture
+def make_task():
+    def _create(
+        title: str,
+        id: Optional[int] = None,
+        status: TaskStatus = TaskStatus.NEW,
+        result: Optional[str] = None,
+        created_at: Optional[datetime] = None,
+        updated_at: Optional[datetime] = None,
+    ) -> TaskEntity:
+        now = datetime.now(UTC)
+        return TaskEntity(
+            id=id or random.randint(0, 10),
+            title=title,
+            status=status,
+            result=result,
+            created_at=created_at or now,
+            updated_at=updated_at or now,
+        )
+
+    return _create
+
+
+@pytest_asyncio.fixture
+async def service(async_session):
+    repo = TaskRepository(async_session)
+    service = TaskService(repo)
+    yield service
