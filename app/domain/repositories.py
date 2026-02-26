@@ -17,7 +17,7 @@ class TaskRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    async def update_status(self, task_id: int, new_status: TaskStatus) -> TaskEntity:
+    async def update(self, task_id: int, **fields) -> TaskEntity:
         """Обновить статус задачи"""
         pass
 

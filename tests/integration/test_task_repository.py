@@ -62,7 +62,7 @@ async def test_update_status(async_session, create_task):
     task = await create_task(title=task_title)
 
     repo = TaskRepository(async_session)
-    updated = await repo.update_status(task.id, TaskStatus.DONE)
+    updated = await repo.update(task.id, status=TaskStatus.DONE)
 
     assert updated.id == task.id
     assert updated.status == TaskStatus.DONE
@@ -73,7 +73,7 @@ async def test_update_status_not_found(async_session):
     repo = TaskRepository(async_session)
 
     with pytest.raises(TaskNotFound):
-        await repo.update_status(999, TaskStatus.DONE)
+        await repo.update(999, status=TaskStatus.DONE)
 
 
 @pytest.mark.asyncio

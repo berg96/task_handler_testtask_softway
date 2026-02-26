@@ -36,12 +36,15 @@ class TaskRepository(TaskRepositoryInterface):
             raise TaskNotFound(identifier=task_id)
         return TaskEntity.from_orm(task)
 
-    async def update_status(self, task_id: int, new_status: TaskStatus) -> TaskEntity:
+    async def update(self, task_id: int, **fields) -> TaskEntity:
         result = await self.session.execute(select(Task).where(Task.id == task_id).with_for_update())
         task = result.scalar_one_or_none()
         if task is None:
             raise TaskNotFound(identifier=task_id)
-        task.status = new_status
+
+        for key, value in fields.items():
+            setattr(task, key, value)
+
         await self.session.commit()
         await self.session.refresh(task)
         return TaskEntity.from_orm(task)

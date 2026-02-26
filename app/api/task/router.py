@@ -8,6 +8,7 @@ from app.api.task.schemas import TaskCreate, TaskFromDB, TaskList
 from app.domain.enums import TaskStatus
 from app.infrastructure.db import get_async_session
 from app.infrastructure.db.repositories.task import TaskRepository
+from app.infrastructure.tasks.task import process_task
 from app.services.task_service import TaskService
 
 router = APIRouter(tags=["Task"], prefix="/tasks")
@@ -29,6 +30,7 @@ async def create_order(
 ) -> TaskFromDB:
     repo = TaskRepository(session)
     task = await TaskService(repo).create_task(data.title)
+    process_task.delay(task.id)
     return TaskFromDB.model_validate(task)
 
 

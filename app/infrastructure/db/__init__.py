@@ -20,4 +20,5 @@ __all__ = [
     "Base",
     "Task",
     "get_async_session",
+    "async_session_maker",
 ]

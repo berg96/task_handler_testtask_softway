@@ -96,12 +96,12 @@ async def test_update_status_calls_repo_methods(mock_repo, make_task):
     service = TaskService(mock_repo)
     task_title = "Unit test update task status calls repo methods"
     mock_repo.get.return_value = make_task(id=1, title=task_title)
-    mock_repo.update_status.return_value = make_task(id=1, title=task_title, status=TaskStatus.PROCESSING)
+    mock_repo.update.return_value = make_task(id=1, title=task_title, status=TaskStatus.PROCESSING)
 
     await service.update_task_status(1, TaskStatus.PROCESSING)
 
     mock_repo.get.assert_awaited_once_with(task_id=1)
-    mock_repo.update_status.assert_awaited_once_with(1, TaskStatus.PROCESSING)
+    mock_repo.update.assert_awaited_once_with(1, status=TaskStatus.PROCESSING)
 
 
 @pytest.mark.asyncio
@@ -113,7 +113,7 @@ async def test_update_status_not_called_on_invalid_transition(mock_repo, make_ta
     with pytest.raises(InvalidTaskStatusTransition):
         await service.update_task_status(1, TaskStatus.NEW)
 
-    mock_repo.update_status.assert_not_called()
+    mock_repo.update.assert_not_called()
 
 
 @pytest.mark.asyncio

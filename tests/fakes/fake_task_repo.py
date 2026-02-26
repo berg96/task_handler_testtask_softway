@@ -37,13 +37,15 @@ class FakeTaskRepository(TaskRepositoryInterface):
 
         return task
 
-    async def update_status(self, task_id: int, new_status: TaskStatus):
+    async def update(self, task_id: int, **fields):
         task = self._store.get(task_id)
 
         if task is None:
             raise TaskNotFound(identifier=task_id)
 
-        task.status = new_status
+        for key, value in fields.items():
+            setattr(task, key, value)
+
         task.updated_at = datetime.now(UTC)
 
         return task
